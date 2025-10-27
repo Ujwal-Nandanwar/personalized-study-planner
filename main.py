@@ -2,6 +2,7 @@ from planner.input_handler import get_user_input
 from planner.dp_algorithm import study_plan_dp
 from planner.backtrack import backtrack_solution
 from planner.visualization import visualize_plan
+from planner.web_visualization import show_web_visual
 
 def main():
     topics, time_required, importance, total_hours = get_user_input()
@@ -17,5 +18,12 @@ def main():
 
     visualize_plan(topics, importance, selected)
 
+    # after visualize_plan line
+    show_web_visual(topics, time_required, importance, selected)
+    
 if __name__ == "__main__":
     main()
+
+
+
+
