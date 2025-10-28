@@ -59,7 +59,16 @@
     <h2 style="color:#2b5797;">Overall Study Insights</h2>
 
     <div class="chart">{{ bar_html | safe }}</div>
+
+    {% if gantt_html %}
+    <div class="chart">
+      <h2 style="color:#2b5797;">Study Rotation Schedule (Gantt Chart)</h2>
+      {{ gantt_html | safe }}
+    </div>
+    {% endif %}
+
     <div class="chart">{{ pie_html | safe }}</div>
+    
     {% if ratio_html %}
     <div class="chart">{{ ratio_html | safe }}</div>
     {% endif %}

@@ -2,6 +2,8 @@ from flask import Flask, render_template
 import plotly.graph_objects as go
 import webbrowser
 import threading
+from planner.scheduler import create_gantt_html
+
 
 app = Flask(__name__, template_folder="../templates")
 
@@ -39,8 +41,10 @@ def index():
 
         bar_html = bar_chart.to_html(full_html=False)
         pie_html = pie_chart.to_html(full_html=False)
+        # --- Gantt Chart (Schedule Visualization) ---
+        gantt_html = create_gantt_html(DATA.get('selected_topics', []), DATA.get('interval', 3))
 
-        return render_template('output.html', bar_html=bar_html, pie_html=pie_html)
+        return render_template('output.html', bar_html=bar_html, pie_html=pie_html, gantt_html=gantt_html)
     except Exception as e:
         # Print full error for debugging
         print("Error in Flask route:", e)
@@ -60,13 +64,14 @@ def index():
 #    threading.Timer(1, open_browser).start()
 #    app.run(debug=False, use_reloader=False)
 
-def show_web_visual(topics, time_required, importance, selected):
+def show_web_visual(topics, time_required, importance, selected, selected_topics):
     global DATA
     DATA = {
         'topics': topics,
         'time_required': time_required,
         'importance': importance,
-        'selected': selected
+        'selected': selected,
+        'selected_topics': selected_topics
     }
 
     # --- automatically open the dashboard in browser ---
