@@ -102,13 +102,6 @@ Then open the browser link shown in your terminal.
 
 ---
 
-## 📜 License
-
-This project is for educational use under the **MIT License**.  
-Developed as a **DAA Lab Mini Project (2025-26)** by *Ujwal Nandanwar*.
-
----
-
 ## 🔗 Quick Access
 
 🌐 **Live App:** [https://personalized-study-planner-gfkdnzdkqgumwcmybz83ef.streamlit.app/](https://personalized-study-planner-gfkdnzdkqgumwcmybz83ef.streamlit.app/)  
