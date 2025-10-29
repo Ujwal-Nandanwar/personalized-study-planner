@@ -19,6 +19,9 @@ def greedy_study_plan(topics, time_required, importance, total_available_time):
     total_importance = 0.0
     used_time = 0.0
     selected_topics = []
+    full_selected = []
+    partial_selected = []
+    
     start = time.time()
 
     for topic, time_req, imp, ratio in items:
@@ -28,12 +31,14 @@ def greedy_study_plan(topics, time_required, importance, total_available_time):
             used_time += time_req
             total_importance += imp
             selected_topics.append((topic, time_req, imp, 1.0))  # fully studied
+            full_selected.append((topic, time_req, imp, 1.0))
         else:
             remain = total_available_time - used_time
             fraction = remain / time_req
             total_importance += imp * fraction
             used_time += remain
             selected_topics.append((topic, time_req, imp, fraction))
+            partial_selected.append((topic, time_req, imp, fraction))
             break
 
     end = time.time()
@@ -46,7 +51,5 @@ def greedy_study_plan(topics, time_required, importance, total_available_time):
     print(f"⏱️ Total Time Used: {used_time:.2f} hrs (of {total_available_time})")
     print(f"⚡ Time Taken for Computation: {round(end - start, 6)} sec")
 
-    # Return indexes of fully selected topics (for visualization)
-    full_selected = [topics.index(t) for t, _, _, frac in selected_topics if frac == 1.0]
-    partial_selected = [topics.index(t) for t, _, _, frac in selected_topics if frac < 1.0]
+   
     return selected_topics, full_selected, partial_selected
