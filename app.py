@@ -12,9 +12,10 @@ st.set_page_config(page_title="Personalized Study Planner", layout="wide")
 st.title("📘 Personalized Study Planner")
 st.markdown("### Optimize your study time using Greedy (Importance/Time Ratio) Algorithm")
 
-# --- Input method selection ---
+# Selecting input methord
 input_method = st.radio("Choose input method:", ["Manual Entry", "Upload CSV"])
 
+#Taking input
 if input_method == "Manual Entry":
     n = st.number_input("Enter number of topics:", min_value=1, max_value=20, value=3, step=1)
     topics, time_required, importance = [], [], []
@@ -46,19 +47,18 @@ else:
 total_time = st.number_input("Enter your total available study time (in hours):", min_value=1.0, value=10.0)
 interval = st.number_input("Enter fixed study interval (in hours):", min_value=1.0, value=3.0)
 
+# Generating study plan
 if st.button("Generate Study Plan"):
     if not topics:
         st.error("Please provide topic details or upload a valid CSV.")
     else:
-        selected, full_selected, partial_selected = greedy_study_plan(topics, time_required, importance, total_time)
+        selected, full_selected, partial_selected = greedy_study_plan(topics, time_required, importance, total_time) #Selecting topics using fractional knapsack
 
-        # Prepare data
         selected_topics = selected
         full_topics = [t for t, _, _, _ in full_selected]
         partial_topics = [t for t, _, _, f in partial_selected if 0 < f < 1]
 
-        # --- BAR CHART ---
-        colors = []
+        colors = []     #bar chart
         for topic in topics:
             if topic in full_topics:
                 colors.append("green")
@@ -71,8 +71,8 @@ if st.button("Generate Study Plan"):
         bar_chart.add_trace(go.Bar(x=topics, y=importance, marker_color=colors))
         bar_chart.update_layout(title="Topic Importance Overview", xaxis_title="Topic", yaxis_title="Importance")
 
-        # --- PIE CHART (Only Selected Topics) ---
-        selected_labels = []
+    
+        selected_labels = []        #pie chart
         selected_values = []
         selected_colors = []
         color_palette = px.colors.qualitative.Safe  # distinct readable colors
@@ -105,7 +105,7 @@ if st.button("Generate Study Plan"):
             pie_chart = go.Figure()
             pie_chart.update_layout(title="🥧 No topics selected")
 
-        # --- GANTT CHART (Fraction-based Duration + Random Order) ---
+        #GANTT CHART
         try:
             gantt_html = create_gantt_html(selected_topics, interval)
             st.markdown("### 🕒 Study Schedule Visualization (Gantt Chart)")
@@ -113,7 +113,7 @@ if st.button("Generate Study Plan"):
         except Exception as e:
             st.error(f"Gantt chart generation failed: {e}")
 
-        # --- Show Charts ---
+        #Diaplaying charts
         col1, col2 = st.columns(2)
         with col1:
             st.plotly_chart(bar_chart, use_container_width=True)

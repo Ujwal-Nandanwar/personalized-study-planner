@@ -1,20 +1,16 @@
 import time
 
 def greedy_study_plan(topics, time_required, importance, total_available_time):
-    """
-    Greedy fractional knapsack for study planning.
-    Chooses topics based on importance/time ratio.
-    """
+    
     n = len(topics)
     items = []
 
-    # Create list of (topic, time, importance, ratio)
+    # Creating list of (topic, time, importance, ratio)
     for i in range(n):
         ratio = importance[i] / time_required[i]
         items.append((topics[i], time_required[i], importance[i], ratio))
 
-    # Sort by ratio descending (importance/time)
-    items.sort(key=lambda x: x[3], reverse=True)
+    items.sort(key=lambda x: x[3], reverse=True)  #Sorting 
 
     total_importance = 0.0
     used_time = 0.0
@@ -33,11 +29,11 @@ def greedy_study_plan(topics, time_required, importance, total_available_time):
             selected_topics.append((topic, time_req, imp, 1.0))  # fully studied
             full_selected.append((topic, time_req, imp, 1.0))
         else:
-            remain = total_available_time - used_time
+            remain = total_available_time - used_time           
             fraction = remain / time_req
             total_importance += imp * fraction
             used_time += remain
-            selected_topics.append((topic, time_req, imp, fraction))
+            selected_topics.append((topic, time_req, imp, fraction))    # partially studied
             partial_selected.append((topic, time_req, imp, fraction))
             break
 

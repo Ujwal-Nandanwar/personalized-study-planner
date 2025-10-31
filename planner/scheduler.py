@@ -3,10 +3,6 @@ import pandas as pd
 import random
 
 def create_gantt_html(selected_topics, interval):
-    """
-    Creates an interval-based, non-repetitive Gantt chart (in hours).
-    Each topic is divided into smaller blocks based on interval size.
-    """
     if not selected_topics:
         return "<p>No topics selected for schedule visualization.</p>"
 
@@ -48,11 +44,9 @@ def create_gantt_html(selected_topics, interval):
         prev_topic = topic
 
     df = pd.DataFrame(tasks)
-
-    # ✅ Prevent Plotly from converting to dates by using graph_objects
     fig = go.Figure()
 
-    # Assign consistent random colors
+    # Assign random colors to topics
     palette = [
         "#4CAF50", "#2196F3", "#FFC107", "#9C27B0", "#FF5722",
         "#00BCD4", "#E91E63", "#8BC34A", "#FF9800", "#795548"
