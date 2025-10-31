@@ -7,7 +7,7 @@ It helps students organize their study schedule efficiently based on topic impor
 
 ## 🚀 Live Demo
 
-👉 **[Click here to open the Study Planner](https://personalized-study-planner-gfkdnzdkqgumwcmybz83ef.streamlit.app/)**  
+👉 **[Click here to open the Study Planner](https://personalized-study-planner.streamlit.app/)**  
 
 (Hosted on [Streamlit Cloud](https://streamlit.io))
 
