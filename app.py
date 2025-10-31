@@ -75,30 +75,43 @@ if st.button("Generate Study Plan"):
         selected_labels = []
         selected_values = []
         selected_colors = []
+        color_palette = px.colors.qualitative.Safe  # distinct readable colors
+        color_count = 0
 
         for topic, time_req, imp, frac in selected_topics:
             if frac > 0:  # include both full (1.0) and partial (<1.0)
-                selected_labels.append(topic)
+                selected_labels.append(f"{topic} ({frac*100:.0f}%)")
                 selected_values.append(time_req * frac)
+
                 if frac == 1.0:
                     selected_colors.append("green")
-                else:
+                elif frac < 1.0:
                     selected_colors.append("gold")
+                else:
+                    selected_colors.append(color_palette[color_count % len(color_palette)])
+                color_count += 1
 
-        pie_chart = go.Figure(go.Pie(
-            labels=selected_labels,
-            values=selected_values,
-            marker=dict(colors=selected_colors),
-            hoverinfo="label+percent",
-            textinfo="value+percent",
-            hole=0.3
-        ))
-        pie_chart.update_layout(title="Time Allocation (Selected Topics Only)")
+        if selected_labels:
+            pie_chart = go.Figure(go.Pie(
+                labels=selected_labels,
+                values=selected_values,
+                marker=dict(colors=selected_colors, line=dict(color='black', width=1)),
+                textinfo="label+percent",
+                hoverinfo="label+value+percent",
+                hole=0.3
+            ))
+            pie_chart.update_layout(title="🥧 Time Allocation (Selected & Partial Topics Only)")
+        else:
+            pie_chart = go.Figure()
+            pie_chart.update_layout(title="🥧 No topics selected")
 
-        # --- GANTT CHART ---
-        gantt_html = create_gantt_html(selected_topics, interval)
-        st.markdown("### 🟩🟨🟥 Study Schedule Visualization")
-        st.components.v1.html(gantt_html, height=600, scrolling=True)
+        # --- GANTT CHART (Fraction-based Duration + Random Order) ---
+        try:
+            gantt_html = create_gantt_html(selected_topics, interval)
+            st.markdown("### 🕒 Study Schedule Visualization (Gantt Chart)")
+            st.components.v1.html(gantt_html, height=600, scrolling=True)
+        except Exception as e:
+            st.error(f"Gantt chart generation failed: {e}")
 
         # --- Show Charts ---
         col1, col2 = st.columns(2)

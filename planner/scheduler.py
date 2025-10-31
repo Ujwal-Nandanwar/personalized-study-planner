@@ -1,81 +1,86 @@
-import pandas as pd
 import plotly.graph_objects as go
-import plotly.express as px
+import pandas as pd
 import random
 
-def create_gantt_html(selected_topics, interval=3):
+def create_gantt_html(selected_topics, interval):
     """
-    Generate a Gantt-style schedule with randomized study order.
-    Ensures no two consecutive topics are the same.
+    Creates an interval-based, non-repetitive Gantt chart (in hours).
+    Each topic is divided into smaller blocks based on interval size.
     """
     if not selected_topics:
-        return "<p>No topics selected for schedule.</p>"
+        return "<p>No topics selected for schedule visualization.</p>"
 
-    schedule = []
+    # Build expanded list of topics based on fractional time
+    expanded = []
+    for topic, time_req, imp, frac in selected_topics:
+        if frac > 0:
+            total_time = time_req * frac
+            expanded.append({"topic": topic, "remaining": total_time})
+
+    if not expanded:
+        return "<p>No valid topics to schedule.</p>"
+
+    tasks = []
     current_time = 0
-    remaining = {t: time_req for t, time_req, _, frac in selected_topics if frac > 0}
+    prev_topic = None
+    random.shuffle(expanded)
 
-    # --- Randomized round-robin logic ---
-    last_topic = None
-    while any(remaining.values()):
-        # Get topics that still need time
-        available = [t for t in remaining if remaining[t] > 0 and t != last_topic]
+    # Generate interval-based schedule
+    while any(t["remaining"] > 0 for t in expanded):
+        available = [t for t in expanded if t["remaining"] > 0 and t["topic"] != prev_topic]
+        if not available:
+            available = [t for t in expanded if t["remaining"] > 0]
 
-        if not available:  # All remaining are same as last, so reset
-            available = [t for t in remaining if remaining[t] > 0]
+        chosen = random.choice(available)
+        topic = chosen["topic"]
+        time_slice = min(interval, chosen["remaining"])
+        start = current_time
+        end = start + time_slice
 
-        # Randomly pick one from available
-        topic = random.choice(available)
-
-        # Get details from selected_topics
-        for t, time_req, imp, frac in selected_topics:
-            if t == topic:
-                break
-
-        study_time = min(interval, remaining[topic])
-        start_time = current_time
-        end_time = start_time + study_time
-
-        schedule.append({
+        tasks.append({
             "Topic": topic,
-            "Start": start_time,
-            "End": end_time,
-            "Hours": study_time
+            "Start": start,
+            "Finish": end
         })
 
-        remaining[topic] -= study_time
-        current_time = end_time
-        last_topic = topic  # Track last studied topic
+        chosen["remaining"] -= time_slice
+        current_time += time_slice
+        prev_topic = topic
 
-    df = pd.DataFrame(schedule)
-    if df.empty:
-        return "<p>No study schedule could be generated.</p>"
+    df = pd.DataFrame(tasks)
 
-    # --- Gantt chart (stacked horizontal bars) ---
+    # ✅ Prevent Plotly from converting to dates by using graph_objects
     fig = go.Figure()
-    unique_topics = df['Topic'].unique()
-    colors = px.colors.qualitative.Safe  # softer, distinct palette
 
-    for i, topic in enumerate(unique_topics):
-        topic_data = df[df['Topic'] == topic]
-        for _, row in topic_data.iterrows():
-            fig.add_trace(go.Bar(
-                x=[row['Hours']],
-                y=[topic],
-                orientation='h',
-                base=[row['Start']],
-                name=topic,
-                marker=dict(color=colors[i % len(colors)]),
-                hovertemplate=f"Topic: {topic}<br>Start: {row['Start']}h<br>End: {row['End']}h<br>Duration: {row['Hours']}h<extra></extra>"
-            ))
+    # Assign consistent random colors
+    palette = [
+        "#4CAF50", "#2196F3", "#FFC107", "#9C27B0", "#FF5722",
+        "#00BCD4", "#E91E63", "#8BC34A", "#FF9800", "#795548"
+    ]
+    color_map = {}
+    color_index = 0
+
+    for _, row in df.iterrows():
+        topic = row["Topic"]
+        if topic not in color_map:
+            color_map[topic] = palette[color_index % len(palette)]
+            color_index += 1
+
+        fig.add_trace(go.Bar(
+            x=[row["Finish"] - row["Start"]],
+            y=[topic],
+            base=row["Start"],
+            orientation='h',
+            marker=dict(color=color_map[topic]),
+            hovertemplate=f"{topic}<br>{row['Start']}–{row['Finish']} hrs<extra></extra>"
+        ))
 
     fig.update_layout(
-        title="Personalized Study Schedule (Randomized Gantt Chart)",
-        xaxis_title="Total Study Time (hours)",
-        yaxis_title="Topics",
+        title="📅 Interval-Based Study Schedule (Gantt Chart)",
         barmode='stack',
-        template="plotly_white",
-        height=550,
+        xaxis=dict(title="Time (hours)", type="linear", tick0=0, dtick=1),
+        yaxis=dict(title="Topics", autorange="reversed"),
+        height=600,
         showlegend=False
     )
 
