@@ -104,5 +104,5 @@ Then open the browser link shown in your terminal.
 
 ## 🔗 Quick Access
 
-🌐 **Live App:** [https://personalized-study-planner-gfkdnzdkqgumwcmybz83ef.streamlit.app/](https://personalized-study-planner-gfkdnzdkqgumwcmybz83ef.streamlit.app/)  
+🌐 **Live App:** [https://personalized-study-planner.streamlit.app/](https://personalized-study-planner.streamlit.app/)  
 📁 **GitHub Repo:** [https://github.com/Ujwal-Nandanwar/personalized-study-planner](https://github.com/Ujwal-Nandanwar/personalized-study-planner)
