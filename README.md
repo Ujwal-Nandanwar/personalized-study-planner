@@ -41,32 +41,7 @@ It also visualizes your plan using:
 - 🟥 Not selected topics  
 ✅ Hosted with Streamlit for easy access anywhere  
 
----
 
-## ⚙️ Tech Stack
-
-| Component | Technology |
-|------------|-------------|
-| **Frontend/UI** | Streamlit |
-| **Backend Logic** | Python |
-| **Visualization** | Plotly |
-| **Algorithm** | Greedy (Fractional Knapsack) |
-
----
-
-## 📂 Folder Structure
-
-```
-personalized-study-planner/
-│
-├── app.py                    # Main Streamlit app
-├── planner/
-│   ├── greedy_optimizer.py    # Greedy algorithm logic
-│   ├── scheduler.py           # Gantt chart and scheduling
-│
-├── requirements.txt           # Dependencies for Streamlit Cloud
-└── README.md                  # Project documentation
-```
 
 ---
 
